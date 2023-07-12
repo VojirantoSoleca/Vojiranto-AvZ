@@ -3,7 +3,17 @@
 bool judge1() // 收尾波延迟炮判定
 {
     for (auto&& zombie : aAliveZombieFilter) {
-        if (zombie.State() != 1 && zombie.State() != 2 && zombie.Abscissa() > 400) {
+        if ((!zombie.IsDead()) && zombie.Abscissa() > 400) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool judge2() // 漏汽球补丁
+{
+    for (auto&& zombie : aAliveZombieFilter) {
+        if (AZombieType(zombie.Type()) == AQQ_16 && zombie.Abscissa() < 500) {
             return true;
         }
     }
@@ -38,6 +48,11 @@ void AScript()
         AConnect(ATime(wave, 341 - 373), [] {
             aPainter.Draw(AText("发射标准波炮", 0, 100), 100);
             aCobManager.Fire({{2, 9}, {5, 9}});
+
+            if (judge2()) {
+                ACard(ABLOVER, 1, 1);
+                aPainter.Draw(AText("漏汽球处理", 0, 160), 100);
+            }
         });
     }
 
